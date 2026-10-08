@@ -12,6 +12,7 @@
 template<class T>
 class SLList {
   class Node {
+    
   public:
     T value;
     Node *next;
@@ -22,18 +23,20 @@ class SLList {
     }
   };
   // Son listas dentro del arreglo que apuntan a nodos. Aquí es donde los ip addresses se encuentran o se ponen. 
+  public:
+
   Node* head;   
-  Node* tail;      
-  std::mutex mtx; 
+  Node* tail;     
+  int count; 
+  mutable std::mutex mtx; 
 
  public:
 
   // Constructor
   SLList() { 
     // Las listas empiezan no conteniendo nada.
-    mtx.lock();
     head = tail = nullptr;
-    mtx.unlock();
+    count = 0;
   }
 
   ~SLList () {
@@ -49,19 +52,30 @@ class SLList {
 
   void push(T x) {
     std::lock_guard<std::mutex> guard(mtx);
+    
     Node *u = new Node(x);
+
     u->next = head;
     head = u;
-    if (tail == nullptr) tail = u;
+
+    if (tail == nullptr){
+      tail = u;
+      count++;
+    }
   }
 
   T pop() {
     std::lock_guard<std::mutex> guard(mtx);
+    if(head == nullptr){
+      throw std::runtime_error("El stack está vacío");
+    }
+
     Node *u = head;
     T x = u->value;
     head = u->next;
     delete u;
     if (nullptr == head) tail = nullptr;
+    count--;
     return x;
   }
 
@@ -74,6 +88,7 @@ class SLList {
       tail->next = u;		// enlazamos u al final
     }
     tail = u;
+    count++;
   }
 
   T dequeue() {
@@ -99,6 +114,18 @@ class SLList {
     }
     return false;
   }
+
+   bool is_empty() {
+    std::lock_guard<std::mutex> guard(mtx);
+    return head == nullptr;
+  }
+
+  //Añado método size
+  int size(){
+    std::lock_guard<std::mutex> guard(mtx);
+    return count;
+  }
+
 };
 
 #endif
