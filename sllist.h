@@ -27,7 +27,6 @@ class SLList {
 
   Node* head;   
   Node* tail;     
-  int count; 
   mutable std::mutex mtx; 
 
  public:
@@ -36,7 +35,6 @@ class SLList {
   SLList() { 
     // Las listas empiezan no conteniendo nada.
     head = tail = nullptr;
-    count = 0;
   }
 
   ~SLList () {
@@ -60,7 +58,6 @@ class SLList {
 
     if (tail == nullptr){
       tail = u;
-      count++;
     }
   }
 
@@ -75,7 +72,6 @@ class SLList {
     head = u->next;
     delete u;
     if (nullptr == head) tail = nullptr;
-    count--;
     return x;
   }
 
@@ -88,7 +84,6 @@ class SLList {
       tail->next = u;		// enlazamos u al final
     }
     tail = u;
-    count++;
   }
 
   T dequeue() {
@@ -119,13 +114,6 @@ class SLList {
     std::lock_guard<std::mutex> guard(mtx);
     return head == nullptr;
   }
-
-  //Añado método size
-  int size(){
-    std::lock_guard<std::mutex> guard(mtx);
-    return count;
-  }
-
 };
 
 #endif

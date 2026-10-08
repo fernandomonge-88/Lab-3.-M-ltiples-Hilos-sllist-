@@ -9,7 +9,7 @@
 using namespace std;
 
 // how many entries to push and pop
-#define STACK_OPS 10		
+#define STACK_OPS 100
 
 // a global list, both threads will use this same list
 SLList<int> l;
@@ -29,14 +29,6 @@ void push_task() {
 void pop_task() {
   int value;
 
-  while(l.size() == 0){
-
-  }
-
-  while(l.size() < STACK_OPS){
-
-  }
-
   for (int i = 0; i < STACK_OPS; i++) {
     // Verificar si la lista esta vacía
     // if(l.is_empty()){
@@ -45,12 +37,11 @@ void pop_task() {
     // }
 
     // Verificar si la Lista esta vacía
-    // while(l.is_empty() < STACK_OPS){
-    //   // Espera a q push termine
-    // }
-    
-
-    // 
+    while(l.is_empty()){
+      // Espera a q push termine
+    }
+  
+    // Saca y hace pop al primer valor en la lista y lo guarda en value para después enseñarlo(output en la siguiente linea)
     value = l.pop();
     // Output de un mensaje 
     cout << "Pop " << value << endl;
